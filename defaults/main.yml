@@ -1,0 +1,19 @@
+---
+# defaults file for consul-cluster
+
+node_role: ""
+consul_version: "0.7.5"
+consul_user: "consul"
+consul_group: "consul"
+consul_iface: "eth1"
+consul_bind_address: "{{ hostvars[inventory_hostname]['ansible_'+ consul_iface ]['ipv4']['address'] }}"
+consul_node_name: "{{ ansible_nodename }}"
+consul_cluster_name: "test-cluster"
+consul_http_bind_address: "0.0.0.0"
+consul_cluster_datacenter: "ws1"
+consul_data_dir: "/var/consul"
+consul_bin_dir: "/usr/local/bin"
+consul_log_level: "INFO"
+consul_enable_syslog: true
+consul_enable_ui: true
+consul_ui_dir: "/opt/consul/web-ui"
