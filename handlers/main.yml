@@ -1,0 +1,13 @@
+---
+# handlers file for consul-cluster
+
+- name: restart consul
+  service:
+    name: consul
+    state: restarted
+
+- name: start consul
+  service:
+    name: consul
+    enabled: yes
+    state: started

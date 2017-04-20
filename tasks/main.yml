@@ -1,0 +1,64 @@
+---
+# tasks file for consul-cluster
+
+- name: Add consul group
+  group:
+    name: "{{ consul_user }}"
+    state: present
+    system: yes
+
+- name: Add consul user
+  user:
+    name: "{{ consul_group }}"
+    state: present
+    system: yes
+
+- name: Create consul directories
+  file:
+    dest: "{{ item }}"
+    state: directory
+    owner: "{{ consul_user }}"
+    group: "{{ consul_group }}"
+  with_items:
+    - /etc/consul
+    - /etc/consul.d
+    - /etc/consul.d/bootstrap
+    - /etc/consul.d/client
+    - /etc/consul.d/server
+    - "{{ consul_ui_dir }}"
+    - "{{ consul_data_dir }}"
+
+- name: Install consul and related packages
+  include: install.yml
+
+- name: Generate consul encryption key
+  command: "{{ consul_bin_dir }}/consul keygen"
+  register: consul_encryption_key
+  run_once: true
+  when: node_role == "bootstrap"
+
+- name: Deploy consul bootstrap config
+  template:
+    src: bootstrap_config.j2
+    dest: "/etc/consul.d/bootstrap/config.json"
+    owner: "{{ consul_user }}"
+    group: "{{ consul_group }}"
+  notify:
+    - restart consul
+
+- name: Deploy consul server config
+  template:
+    src: server_config.j2
+    dest: "/etc/consul.d/server/config.json"
+    owner: "{{ consul_user }}"
+    group: "{{ consul_group }}"
+  notify:
+    - restart consul
+
+- name: Deploy consul server init script
+  template:
+      src: server_init.j2
+      dest: /etc/init/consul.conf
+      owner: root
+      group: root
+      mode: 0755

@@ -1,0 +1,20 @@
+{% set comma = joiner(", ") %}
+{% set comma_nodes = joiner(", ") %}
+{
+    "bind_addr": "{{ consul_bind_address }}",
+    "bootstrap": false,
+    "server": true,
+    "node_name": "{{ consul_node_name }}",
+    "datacenter": "{{ consul_cluster_datacenter }}",
+    "data_dir": "{{ consul_data_dir }}",
+    "encrypt": "{{ consul_encryption_key.stdout }}",
+    "log_level": "{{ consul_log_level }}",
+    "enable_syslog": {{ consul_enable_syslog|lower }},
+    "start_join": [
+      {% set interface = 'ansible_' ~ consul_iface %}
+        {% for host in groups[consul_cluster_name] %}
+          {% if host != inventory_hostname and (hostvars[host]['node_role'] == 'server' or hostvars[host]['node_role'] == 'bootstrap') %}
+            {{ comma_nodes() }}"{{ hostvars[host][interface]['ipv4']['address'] }}"
+          {% endif %}
+        {% endfor %} ]
+}

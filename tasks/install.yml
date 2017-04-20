@@ -1,0 +1,17 @@
+- name: Install zip package
+  apt:
+    name: zip
+    state: present
+
+- name: Download consul zipfile
+  unarchive:
+    src: https://releases.hashicorp.com/consul/{{ consul_version }}/consul_{{ consul_version }}_linux_amd64.zip
+    dest: "{{ consul_bin_dir }}"
+    remote_src: true
+
+- name: Download consul web UI
+  unarchive:
+    src: https://releases.hashicorp.com/consul/{{ consul_version }}/consul_{{ consul_version }}_web_ui.zip
+    dest: "{{ consul_ui_dir }}"
+    remote_src: true
+  when: node_role == "bootstrap"

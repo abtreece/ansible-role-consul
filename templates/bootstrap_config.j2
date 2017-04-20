@@ -1,0 +1,15 @@
+{
+    "bind_addr": "{{ consul_bind_address }}",
+    "addresses": {
+        "http": "{{ consul_http_bind_address }}"
+    },
+    "bootstrap": true,
+    "server": true,
+    "datacenter": "{{ consul_cluster_datacenter }}",
+    "data_dir": "{{ consul_data_dir }}",
+    "encrypt": "{{ consul_encryption_key.stdout }}",
+    "log_level": "{{ consul_log_level }}",
+    "enable_syslog": {{ consul_enable_syslog|lower }},
+    "ui": {{ consul_enable_ui|lower }},
+    "ui_dir": "{{ consul_ui_dir }}"
+}
